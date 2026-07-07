@@ -24,7 +24,6 @@ header{
   height: 128px;
   width: 128px;
 }
-.logo .dot{width:8px;height:8px;border-radius:50%;background:var(--coral);}
 .search{
   flex:1;max-width:480px;
   display:flex;align-items:center;gap:8px;
