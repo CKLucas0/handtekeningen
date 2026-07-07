@@ -6,46 +6,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
-  <div class="logo"><span class="dot"></span>Rehome</div>
+  <a href="#" class="logo" id="logo-link"><span class="dot"></span>SignHub</a>
   <div class="search">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     Search jackets, denim, boots…
   </div>
-  <nav>
-    <a href="#">Women</a>
-    <a href="#">Men</a>
-    <a href="#">Kids</a>
-    <a href="#">Home</a>
-  </nav>
-  <a href="#" class="sell-btn">Sell an item</a>
+  <a href="#" class="sell-btn" id="sell-link">Sell an item</a>
 </header>
 
-<div class="chips">
-  <div class="chip active">All</div>
-  <div class="chip">voetbal</div>
-  <div class="chip">Denim</div>
-  <div class="chip">Knitwear</div>
-  <div class="chip">Footwear</div>
-  <div class="chip">Bags</div>
-  <div class="chip">Accessories</div>
+<div id="browse-view">
+  <div class="chips">
+    <div class="chip active">All</div>
+    <div class="chip">Outerwear</div>
+    <div class="chip">Denim</div>
+    <div class="chip">Knitwear</div>
+    <div class="chip">Footwear</div>
+    <div class="chip">Bags</div>
+    <div class="chip">Accessories</div>
+  </div>
+
+  <main>
+    <div class="section-label">Newly listed near you</div>
+    <div class="grid" id="grid"></div>
+  </main>
 </div>
 
-<main>
-  <div class="section-label">Newly listed near you</div>
-  <div class="grid" id="grid"></div>
-</main>
+<div id="sell-view" class="hidden">
+  <div class="sell-wrap">
+    <a href="#" class="sell-back" id="back-link">← Back to browsing</a>
+    <h1 class="sell-title">List an item</h1>
+    <p class="sell-sub">Add photos and details — it takes about two minutes.</p>
 
-<footer>
+    <div class="photo-row">
+      <div class="photo-slot main">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+      <div class="photo-slot">+</div>
+    </div>
+
+    <form id="sell-form">
+      <div class="field">
+        <label for="f-title">Title</label>
+        <input id="f-title" type="text" placeholder="e.g. Carhartt WIP Detroit jacket" required>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-brand">Brand</label>
+          <input id="f-brand" type="text" placeholder="e.g. Levi's" required>
+        </div>
+        <div class="field">
+          <label for="f-category">Category</label>
+          <select id="f-category">
+            <option>Outerwear</option>
+            <option>Denim</option>
+            <option>Knitwear</option>
+            <option>Footwear</option>
+            <option>Bags</option>
+            <option>Accessories</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-size">Size</label>
+          <input id="f-size" type="text" placeholder="e.g. M, 32/32, EU42">
+        </div>
+        <div class="field">
+          <label for="f-condition">Condition</label>
+          <select id="f-condition">
+            <option>Brand new with tags</option>
+            <option>Like new</option>
+            <option selected>Very good</option>
+            <option>Good</option>
+            <option>Worn</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-price">Price <span class="hint">— you keep the rest after fees</span></label>
+        <div class="price-field">
+          <span>€</span>
+          <input id="f-price" type="number" min="1" placeholder="25" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-desc">Description</label>
+        <textarea id="f-desc" placeholder="Fit, fabric, any wear worth mentioning…"></textarea>
+      </div>
+
+      <button type="submit" class="publish-btn">Publish listing</button>
+    </form>
+  </div>
+</div>
+
+<footer id="site-footer">
   <span>© 2026 Rehome</span>
   <span>Help · Terms · Privacy</span>
-  <script src="script.js"></script>
-  <link rel="stylesheet" href="style.css">
 </footer>
 
+<div class="toast" id="toast">Listing published</div>
 
+<script src="script.js"></script>
 </body>
 </html>

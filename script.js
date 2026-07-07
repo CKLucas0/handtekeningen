@@ -1,17 +1,18 @@
 const items = [
-    {brand:"Carhartt WIP",item:"Detroit jacket",price:42,was:68,size:"M",cond:"Good",tag:"−38%"},
-    {brand:"Levi's",item:"501 straight jeans",price:24,size:"32/32",cond:"Very good"},
-    {brand:"Arc'teryx",item:"Beta rain shell",price:95,size:"L",cond:"Like new"},
-    {brand:"COS",item:"Wool crewneck",price:18,was:29,size:"S",cond:"Good",tag:"−38%"},
-    {brand:"Dr. Martens",item:"1460 boots",price:55,size:"EU42",cond:"Very good"},
-    {brand:"Uniqlo",item:"Fleece pullover",price:12,size:"M",cond:"Good"},
-    {brand:"Patagonia",item:"Better Sweater vest",price:38,size:"L",cond:"Very good"},
-    {brand:"Ganni",item:"Printed midi skirt",price:29,was:45,size:"S",cond:"Like new",tag:"−36%"},
-    {brand:"Stüssy",item:"Logo cap",price:16,size:"One size",cond:"Good"},
-    {brand:"Acne Studios",item:"Wool scarf",price:34,size:"One size",cond:"Very good"},
-  ];
+  {brand:"Carhartt WIP",item:"Detroit jacket",price:42,was:68,size:"M",cond:"Good",tag:"−38%"},
+  {brand:"Levi's",item:"501 straight jeans",price:24,size:"32/32",cond:"Very good"},
+  {brand:"Arc'teryx",item:"Beta rain shell",price:95,size:"L",cond:"Like new"},
+  {brand:"COS",item:"Wool crewneck",price:18,was:29,size:"S",cond:"Good",tag:"−38%"},
+  {brand:"Dr. Martens",item:"1460 boots",price:55,size:"EU42",cond:"Very good"},
+  {brand:"Uniqlo",item:"Fleece pullover",price:12,size:"M",cond:"Good"},
+  {brand:"Patagonia",item:"Better Sweater vest",price:38,size:"L",cond:"Very good"},
+  {brand:"Ganni",item:"Printed midi skirt",price:29,was:45,size:"S",cond:"Like new",tag:"−30%"},
+  {brand:"Stüssy",item:"Logo cap",price:16,size:"One size",cond:"Good"},
+  {brand:"Acne Studios",item:"Wool scarf",price:34,size:"One size",cond:"Very good"},
+];
 
-  const grid = document.getElementById('grid');
+const grid = document.getElementById('grid');
+function renderGrid(){
   grid.innerHTML = items.map(it => `
     <div class="card">
       <div class="thumb">
@@ -30,10 +31,54 @@ const items = [
       </div>
     </div>
   `).join('');
+}
+renderGrid();
 
-  document.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelector('.chip.active').classList.remove('active');
-      chip.classList.add('active');
-    });
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelector('.chip.active').classList.remove('active');
+    chip.classList.add('active');
   });
+});
+
+// view switching between browse and sell
+const browseView = document.getElementById('browse-view');
+const sellView = document.getElementById('sell-view');
+
+function showSell(e){
+  if(e) e.preventDefault();
+  browseView.classList.add('hidden');
+  sellView.classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function showBrowse(e){
+  if(e) e.preventDefault();
+  sellView.classList.add('hidden');
+  browseView.classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+document.getElementById('sell-link').addEventListener('click', showSell);
+document.getElementById('back-link').addEventListener('click', showBrowse);
+document.getElementById('logo-link').addEventListener('click', showBrowse);
+
+// publishing a new listing
+const toast = document.getElementById('toast');
+document.getElementById('sell-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const newItem = {
+    brand: document.getElementById('f-brand').value || 'Unbranded',
+    item: document.getElementById('f-title').value,
+    price: Number(document.getElementById('f-price').value) || 0,
+    size: document.getElementById('f-size').value || 'One size',
+    cond: document.getElementById('f-condition').value,
+  };
+  items.unshift(newItem);
+  renderGrid();
+
+  e.target.reset();
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+  showBrowse();
+});
