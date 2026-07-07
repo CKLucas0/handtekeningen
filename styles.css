@@ -21,9 +21,8 @@ header{
   display:flex;align-items:center;gap:28px;
 }
 .logo{
-  font-family:'Fraunces',serif;font-weight:600;font-size:22px;
-  letter-spacing:-0.02em;color:var(--teal-deep);
-  display:flex;align-items:center;gap:6px;
+  height: 128px;
+  width: 128px;
 }
 .logo .dot{width:8px;height:8px;border-radius:50%;background:var(--coral);}
 .search{
