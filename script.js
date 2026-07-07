@@ -1,15 +1,16 @@
-const items = [
-  {brand:"Carhartt WIP",item:"Detroit jacket",price:42,was:68,size:"M",cond:"Good",tag:"−38%"},
-  {brand:"Levi's",item:"501 straight jeans",price:24,size:"32/32",cond:"Very good"},
-  {brand:"Arc'teryx",item:"Beta rain shell",price:95,size:"L",cond:"Like new"},
-  {brand:"COS",item:"Wool crewneck",price:18,was:29,size:"S",cond:"Good",tag:"−38%"},
-  {brand:"Dr. Martens",item:"1460 boots",price:55,size:"EU42",cond:"Very good"},
-  {brand:"Uniqlo",item:"Fleece pullover",price:12,size:"M",cond:"Good"},
-  {brand:"Patagonia",item:"Better Sweater vest",price:38,size:"L",cond:"Very good"},
-  {brand:"Ganni",item:"Printed midi skirt",price:29,was:45,size:"S",cond:"Like new",tag:"−30%"},
-  {brand:"Stüssy",item:"Logo cap",price:16,size:"One size",cond:"Good"},
-  {brand:"Acne Studios",item:"Wool scarf",price:34,size:"One size",cond:"Very good"},
-];
+const supabase = window.supabase.createClient(
+  'https://dqslxoozolliqqguauqh.supabase.co',
+  'sb_publishable_c6lxpBsRn0htg6BJ61lU7Q_I5tfrQMC'
+);
+
+async function loadListings() {
+  const { data, error } = await supabase.from('listings').select().order('created_at', { ascending: false });
+  if (error) { console.error(error); return; }
+  items.length = 0;
+  items.push(...data);
+  renderGrid();
+}
+loadListings();
 document.querySelectorAll(".photo-slot").forEach(slot => {
   const input = slot.querySelector(".photoInput");
   const preview = slot.querySelector(".preview");
