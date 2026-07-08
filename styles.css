@@ -78,6 +78,9 @@ main{padding:28px 32px 60px;}
   font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;
   letter-spacing:0.02em;
 }
+.photo_card{
+  width:100%;height:100%;object-fit:cover;
+}
 .info{padding:12px 14px 14px;}
 .price{
   font-family:'Fraunces',serif;font-weight:600;font-size:18px;
