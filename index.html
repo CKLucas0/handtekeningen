@@ -42,23 +42,21 @@
     <h1 class="sell-title">List an item</h1>
     <p class="sell-sub">Add photos and details.</p>
 
-    <div class="photo-row">
-      <div class="photo-slot main">+</div>
-      <div class="photo-slot">+</div>
-      <div class="photo-slot">+</div>
-      <div class="photo-slot">+</div>
-    </div>
-
     <form id="sell-form">
+      <div class="field">
+        <label>Photo</label>
+        <label for="f-photo" class="photo-slot main" id="photo-slot-label">+</label>
+        <input id="f-photo" type="file" accept="image/*" style="display:none;">
+      </div>
       <div class="field">
         <label for="f-title">Title</label>
         <input id="f-title" type="text" placeholder="e.g. Carhartt WIP Detroit jacket" required>
       </div>
 
-      <div class="field-row">
+      <div class="field-row">  
         <div class="field">
-          <label for="f-brand">Brand</label>
-          <input id="f-brand" type="text" placeholder="e.g. Levi's" required>
+          <label for="f-sign">Brand</label>
+          <input id="f-sign" type="text" placeholder="e.g. Levi's" required>
         </div>
         <div class="field">
           <label for="f-category">Category</label>
@@ -91,7 +89,8 @@
       </div>
 
       <div class="field">
-        <label for="f-price">Price <span class="hint">— you keep the rest after fees</span></label>
+        <label for="f-price">Price <span class="hint">
+        </span></label>
         <div class="price-field">
           <span>€</span>
           <input id="f-price" type="number" min="1" placeholder="25" required>

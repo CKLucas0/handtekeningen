@@ -61,7 +61,7 @@ function make_item() {
 }
 var items = [
 ];
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 10; i++) {
   make_item();
 }
 
@@ -115,27 +115,58 @@ function showBrowse(e){
 document.getElementById('sell-link').addEventListener('click', showSell);
 document.getElementById('back-link').addEventListener('click', showBrowse);
 document.getElementById('logo-link').addEventListener('click', showBrowse);
-document.getElementById('submit-button').addEventListener('click', showBrowse);
-document.getElementById('submit-button').addEventListener('click', make_item);
-
 // publishing a new listing
 const toast = document.getElementById('toast');
-document.getElementById('sell-form').addEventListener('submit', (e) => {
+document.getElementById('sell-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-
+  const file = document.getElementById('f-photo').files[0];
+  if (!file) {
+    document.getElementById('photo-slot-label').style.borderColor = 'red';
+    return; // stop here, don't publish
+  }
+  const photoData = await readFileAsDataURL(file);
   const newItem = {
     sign: document.getElementById('f-sign').value || 'Unsigned',
     product: document.getElementById('f-title').value,
     price: Number(document.getElementById('f-price').value) || 0,
-    size: document.getElementById('f-size').value || 'no size',
+    size: document.getElementById('f-size').value || '',
     cond: document.getElementById('f-condition').value,
+    photo: photoData,
   };
   items.unshift(newItem);
   renderGrid();
-
   e.target.reset();
+  const slot = document.getElementById('photo-slot-label');
+  slot.innerHTML = '+';
+  slot.style.backgroundImage = '';
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2200);
   showBrowse();
 });
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+document.getElementById('f-photo').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  const slot = document.getElementById('photo-slot-label');
+  slot.style.borderColor = ''; // clear any red warning from a previous failed submit
 
+  if (!file) {
+    slot.innerHTML = '+';
+    slot.style.backgroundImage = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    slot.innerHTML = '';
+    slot.style.backgroundImage = `url(${event.target.result})`;
+    slot.style.backgroundSize = 'cover';
+    slot.style.backgroundPosition = 'center';
+  };
+  reader.readAsDataURL(file);
+});

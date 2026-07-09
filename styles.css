@@ -63,7 +63,7 @@ main{padding:28px 32px 60px;}
   background:var(--card);border:1px solid var(--line);border-radius:14px;
   overflow:hidden;transition:box-shadow .15s ease, transform .15s ease;
 }
-.card:hover{box-shadow:0 8px 20px rgba(28,28,26,0.08);transform:translateY(-2px);}
+.card:hover{box-shadow:0 8px 20px rgba(28,28,26,0.08);transform: scale(1.03);}
 .thumb{
   aspect-ratio:3/4;background:linear-gradient(135deg,#EFEAE1,#E2DCCF);
   position:relative;display:flex;align-items:center;justify-content:center;
@@ -113,7 +113,7 @@ footer{
 
 .photo-row{display:flex;gap:12px;margin-bottom:32px;}
 .photo-slot{
-  width:88px;height:88px;border-radius:10px;border:1.5px dashed var(--line);
+  width:128px;height:128px;border-radius:10px;border:3px dashed var(--line);
   display:flex;align-items:center;justify-content:center;color:var(--stone);
   background:#fff;flex-shrink:0;font-size:22px;
 }
@@ -122,6 +122,13 @@ footer{
 .field{margin-bottom:20px;}
 .field label{
   display:block;font-size:13px;font-weight:500;margin-bottom:7px;
+}
+.field label.photo-slot{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:0;
+  font-weight:400;
 }
 .field .hint{color:var(--stone);font-weight:400;}
 .field input, .field select, .field textarea{
