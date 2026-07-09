@@ -1,18 +1,36 @@
 /*need to make this automated, so that the price is random between 20 and 300 and the name and image is random*/
 
-const randomNames = [
-  "ronaldo", "messi", "neymar", "mbappe", "salah", "modric", "kane", "de bruyne", "pogba", "hazard"
-];
+function randomName(){
+  const randomNames = [
+    "ronaldo", "messi", "neymar", "mbappe", "salah", "modric", "kane", "de bruyne", "pogba", "hazard","lewandowski", "suarez", "griezmann", "sterling", "mane", "aguero", "cavani", "dzeko", "higuain", "benzema"
+  ];
+  return randomNames[Math.floor(Math.random() * randomNames.length)];
+}
 
+function randomImage(){
+  const images = [
+    "placeholder1.png", "placeholder2.png", "placeholder3.png"
+  ];
+  return images[Math.floor(Math.random() * images.length)];
+}
 
 function randomprice(){
   return Math.floor(Math.random() * 280) + 20;
 }
 
+function randomdiscount(){
+  if (Math.floor(Math.random()*10) < 7) {
+    return false
+  }
+  else {
+    return `-${Math.floor(Math.random()*30)+10}%`
+  } 
+}
+
 const items = [
-  {sign:"Carhartt WIP",product:"Detroit jacket",price:42,was:68,cond:"Good",tag:"−38%"},
-  {sign:"Levi's",product:"501 straight jeans",price:randomprice(),size:"32/32",cond:"Very good"},
-  {sign:"Arc'teryx",product:"Beta rain shell",price:randomprice(),size:"L",cond:"Like new"},
+  {sign:"Carhartt WIP",product:"Detroit jacket",price:42,was:68,cond:"Good",tag:"−38%",photo:randomImage()},
+  {sign:"Levi's",product:"501 straight jeans",price:randomprice(),size:"32/32",cond:"Very good",photo:"test.png"},
+  {sign:"Arc'teryx",product:"Beta rain shell",price:randomprice(),size:"L",cond:"Like new",photo:"test2.png"},
   {sign:"COS",product:"Wool crewneck",price:18,was:29,size:"S",cond:"Good",tag:"−38%"},
   {sign:"Dr. Martens",product:"1460 boots",price:randomprice(),size:"EU42",cond:"Very good"},
   {sign:"Uniqlo",product:"Fleece pullover",price:randomprice(),size:"M",cond:"Good"},
@@ -48,7 +66,7 @@ function renderGrid(){
             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
           </svg>
         </div>
-        <img class="photo_card" src="logo black.png">
+        <img class="photo_card" src="${it.photo ? it.photo : 'logo black.png'}">
       </div>
       <div class="info">
         <div class="price">€${it.price}${it.was ? `<span class="was">€${it.was}</span>` : ''}</div>
