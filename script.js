@@ -65,8 +65,24 @@ function randomcategory() {
 function make_item() {
   items.push({sign:randomName(),...randomproduct(),...randomprice(),cond:randomcondition(),photo:randomImage(), category:randomcategory()});
 }
+
+function resizeImage(file, maxSize = 400) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 var items = [];
-for (let i = 0; i < 50; i++) {make_item();}
+for (let i = 0; i < 100; i++) {make_item();}
 
 chipText = "All"
 const grid = document.getElementById('grid');
@@ -145,7 +161,7 @@ document.getElementById('sell-form').addEventListener('submit', async (e) => {
     document.getElementById('photo-slot-label').style.borderColor = 'red';
     return; // stop here, don't publish
   }
-  const photoData = await readFileAsDataURL(file);
+  const photoData = await resizeImage(file);
   const newItem = {
     sign: document.getElementById('f-sign').value || 'Unsigned',
     product: document.getElementById('f-title').value,
