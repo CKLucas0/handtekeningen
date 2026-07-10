@@ -56,14 +56,17 @@ function randomproduct() {
     return { product: item };
   }
 }
+function randomcategory() {
+  const categorys = [
+    "Sport", "Actors", 
+  ]
+  return categorys[Math.floor(Math.random()*categorys.length)]
+}
 function make_item() {
-  items.push({sign:randomName(),...randomproduct(),...randomprice(),cond:randomcondition(),photo:randomImage()});
+  items.push({sign:randomName(),...randomproduct(),...randomprice(),cond:randomcondition(),photo:randomImage(), category:randomcategory()});
 }
-var items = [
-];
-for (let i = 0; i < 10; i++) {
-  make_item();
-}
+var items = [];
+for (let i = 0; i < 10; i++) {make_item();}
 
 const grid = document.getElementById('grid');
 function renderGrid(){
@@ -131,6 +134,7 @@ document.getElementById('sell-form').addEventListener('submit', async (e) => {
     price: Number(document.getElementById('f-price').value) || 0,
     size: document.getElementById('f-size').value || '',
     cond: document.getElementById('f-condition').value,
+    category: document.getElementById("f-condition"),
     photo: photoData,
   };
   items.unshift(newItem);
