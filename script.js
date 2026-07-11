@@ -4,74 +4,6 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
-function randomName(){
-  const randomNames = [
-    "ronaldo", "messi", "neymar", "mbappe", "salah", "modric", "kane", "de bruyne", "pogba", "hazard","lewandowski", "suarez", "griezmann", "sterling", "mane", "aguero", "cavani", "dzeko", "higuain", "benzema"
-  ];
-  return randomNames[Math.floor(Math.random() * randomNames.length)];
-}
-function randomImage(){
-  const images = [
-    "placeholder1.png", "placeholder2.png", "placeholder3.png"
-  ];
-  return images[Math.floor(Math.random() * images.length)];
-}
-function randomprice(){
-  if (Math.floor(Math.random()*10) < 7) {
-    return {price: Math.floor(Math.random() * 280) + 20};
-  }
-  else {
-    var oldprice =  Math.floor(Math.random() * 280) + 20
-    var discount = (Math.floor(Math.random()*30)+10)/100
-    var newprice = oldprice-Math.floor(oldprice * discount)
-
-    return {
-      price: newprice,
-      was: oldprice,
-      tag: `-${Math.round(discount*100)}%`
-    }
-  }
-}
-function randomdiscount(){
-  if (Math.floor(Math.random()*10) < 7) {
-    return false
-  }
-  else {
-    return Math.floor(Math.random()*30)+10
-  } 
-}
-function randomcondition() {
-  const conditions = [
-    "Brand new with tags","Like new","Very good","Worn"
-  ];
-  return conditions[Math.floor(Math.random() * conditions.length)];
-}
-function randomproduct() {
-  const products = [
-    "football","shirt","shorts","sneakers","jacket","hoodie","cap","socks","gloves","scarf"
-  ];
-  const sizes = ["XS","S","M","L","XL","XXL"];
-  var item =  products[Math.floor(Math.random() * products.length)];
-  if (item == "shirt" || item == "shorts" || item == "jacket" || item == "hoodie") {
-    return {
-      product: item,
-      size: sizes[Math.floor(Math.random() * sizes.length)]
-    };
-  }
-  else {
-    return { product: item };
-  }
-}
-function randomcategory() {
-  const categorys = [
-    "Sport", "Actors", "Singers", "Other"
-  ]
-  return categorys[Math.floor(Math.random()*categorys.length)]
-}
-function make_item() {
-  items.push({sign:randomName(),...randomproduct(),...randomprice(),cond:randomcondition(),photo:randomImage(), category:randomcategory()});
-}
-
 function resizeImage(file, maxSize = 400) {
   return new Promise((resolve) => {
     const img = new Image();
@@ -81,14 +13,27 @@ function resizeImage(file, maxSize = 400) {
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL('image/jpeg', 0.8));
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.8);
     };
     img.src = URL.createObjectURL(file);
   });
 }
+async function uploadPhoto(blob){
+  const fileName = `${Date.now()}.jpg`;
 
-var items = [];
-for (let i = 0; i < 100; i++) {make_item();}
+  const { error } = await supabaseClient.storage
+    .from('listing-photos')
+    .upload(fileName, blob, { contentType: 'image/jpeg' });
+
+  if (error) throw error;
+
+  const { data } = supabaseClient.storage
+    .from('listing-photos')
+    .getPublicUrl(fileName);
+
+  return data.publicUrl;
+}
+
 
 let chipText = "All"
 const grid = document.getElementById('grid');
@@ -121,7 +66,22 @@ function renderGrid(category,search){
     </div>
   `).join('');
 }
-renderGrid("All",document.getElementById("search-input").value);
+var items = [];
+
+async function loadListings(){
+  const { data, error } = await supabaseClient
+    .from('listings')
+    .select()
+    .order('created_at', { ascending: false });
+
+  if (error){
+    console.error(error);
+    return;
+  }
+  items = data;
+  renderGrid("All", document.getElementById("search-input").value);
+}
+loadListings()
 
 document.querySelectorAll('.chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -204,15 +164,24 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
 });
 
 // publishing a new listing
-const toast = document.getElementById('toast');
 document.getElementById('sell-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const file = document.getElementById('f-photo').files[0];
   if (!file) {
     document.getElementById('photo-slot-label').style.borderColor = 'red';
-    return; // stop here, don't publish
+    return;
   }
-  const photoData = await resizeImage(file);
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) {
+    alert('Please log in to publish a listing.');
+    showLogin();
+    return;
+  }
+
+  const resizedBlob = await resizeImage(file);
+  const photoData = await uploadPhoto(resizedBlob);
+
   const newItem = {
     sign: document.getElementById('f-sign').value || 'Unsigned',
     product: document.getElementById('f-title').value,
@@ -221,9 +190,17 @@ document.getElementById('sell-form').addEventListener('submit', async (e) => {
     cond: document.getElementById('f-condition').value,
     category: document.getElementById("f-category").value,
     photo: photoData,
+    user_id: session.user.id,
   };
-  items.unshift(newItem);
-  renderGrid("All",document.getElementById("search-input").value);
+
+  const { error } = await supabaseClient.from('listings').insert(newItem);
+
+  if (error) {
+    alert('Something went wrong: ' + error.message);
+    return;
+  }
+
+  await loadListings();
   e.target.reset();
   const slot = document.getElementById('photo-slot-label');
   slot.innerHTML = '+';
