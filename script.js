@@ -1,3 +1,9 @@
+const supabaseClient = window.supabase.createClient(
+  'https://kvcbnpmqsktjphdjmfrf.supabase.co',
+  'sb_publishable_xuPTsxyA9SZ2YcTm0nLyWQ_NMeAXJJ5'
+);
+
+
 function randomName(){
   const randomNames = [
     "ronaldo", "messi", "neymar", "mbappe", "salah", "modric", "kane", "de bruyne", "pogba", "hazard","lewandowski", "suarez", "griezmann", "sterling", "mane", "aguero", "cavani", "dzeko", "higuain", "benzema"
@@ -84,7 +90,7 @@ function resizeImage(file, maxSize = 400) {
 var items = [];
 for (let i = 0; i < 100; i++) {make_item();}
 
-chipText = "All"
+let chipText = "All"
 const grid = document.getElementById('grid');
 function renderGrid(category,search){
   let filtereditems;
@@ -122,36 +128,81 @@ document.querySelectorAll('.chip').forEach(chip => {
     document.querySelector('.chip.active').classList.remove('active');
     chip.classList.add('active');
 
-    const chipText = chip.textContent;
+    chipText = chip.textContent;
     renderGrid(chipText,document.getElementById("search-input").value)
 
   });
 });
-
 // view switching between browse and sell
 const browseView = document.getElementById('browse-view');
 const browseViewSearch = document.getElementById('browse-view-search');
 const sellView = document.getElementById('sell-view');
+const registerView = document.getElementById('register-view');
+const loginView = document.getElementById('login-view');
+
+function hideAllViews(){
+  browseView.classList.add('hidden');
+  browseViewSearch.classList.add('hidden');
+  sellView.classList.add('hidden');
+  registerView.classList.add('hidden');
+  loginView.classList.add('hidden');
+}
 
 function showSell(e){
   if(e) e.preventDefault();
-  browseView.classList.add('hidden');
-  browseViewSearch.classList.add('hidden');
+  hideAllViews();
   sellView.classList.remove('hidden');
   window.scrollTo(0,0);
 }
+
 function showBrowse(e){
   if(e) e.preventDefault();
-  sellView.classList.add('hidden');
+  hideAllViews();
   browseView.classList.remove('hidden');
   browseViewSearch.classList.remove('hidden');
-  document.getElementById("search-input").value = ""
+  document.getElementById("search-input").value = "";
+  window.scrollTo(0,0);
+}
+
+function showRegister(e){
+  if(e) e.preventDefault();
+  hideAllViews();
+  registerView.classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+function showLogin(e){
+  if(e) e.preventDefault();
+  hideAllViews();
+  loginView.classList.remove('hidden');
   window.scrollTo(0,0);
 }
 
 document.getElementById('sell-link').addEventListener('click', showSell);
 document.getElementById('back-link').addEventListener('click', showBrowse);
 document.getElementById('logo-link').addEventListener('click', showBrowse);
+document.getElementById('login-link').addEventListener('click', showLogin);
+document.getElementById('register-back-link').addEventListener('click', showBrowse);
+document.getElementById('login-back-link').addEventListener('click', showBrowse);
+document.getElementById('go-to-login').addEventListener('click', showLogin);
+document.getElementById('go-to-register').addEventListener('click', showRegister);
+
+// sign up
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('r-email').value;
+  const password = document.getElementById('r-password').value;
+
+  const { data, error } = await supabaseClient.auth.signUp({ email, password });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert('Account created! Check your email to confirm before logging in.');
+    showLogin();
+  }
+});
+
 // publishing a new listing
 const toast = document.getElementById('toast');
 document.getElementById('sell-form').addEventListener('submit', async (e) => {
@@ -210,4 +261,40 @@ document.getElementById('f-photo').addEventListener('change', (e) => {
 });
 document.getElementById('search-input').addEventListener('input', (e) => {
   renderGrid(chipText,e.target.value)
+});
+async function updateAuthStatus(){
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  const authStatus = document.getElementById('auth-status');
+
+  if (session) {
+    authStatus.innerHTML = `
+      <span style="color:var(--stone); font-size:13px; margin-right:10px;">${session.user.email}</span>
+      <a href="#" class="sell-back" id="logout-link">Log out</a>
+    `;
+    document.getElementById('logout-link').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await supabaseClient.auth.signOut();
+      updateAuthStatus();
+      showBrowse();
+    });
+  } else {
+    authStatus.innerHTML = `<a href="#" class="sell-back" id="login-link">Log in</a>`;
+    document.getElementById('login-link').addEventListener('click', showLogin);
+  }
+}
+
+updateAuthStatus();
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('l-email').value;
+  const password = document.getElementById('l-password').value;
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    updateAuthStatus();
+    showBrowse();
+  }
 });

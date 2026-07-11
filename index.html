@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -15,6 +16,9 @@
   <div class="search" id="browse-view-search">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" id="search-input" placeholder="Search signatures, athletes, teams…">
+  </div>
+  <div id="auth-status">
+    <a href="#" class="sell-back" id="login-link">Log in</a>
   </div>
   <a href="#" class="sell-btn" id="sell-link">Sell an item</a>
 </header>
@@ -99,6 +103,51 @@
       </div>
 
       <button type="submit" class="publish-btn" id="submit-button">Publish listing</button>
+    </form>
+  </div>
+</div>
+<div id="register-view" class="hidden">
+  <div class="sell-wrap">
+    <a href="#" class="sell-back" id="register-back-link">← Back to browsing</a>
+    <h1 class="sell-title">Create an account</h1>
+    <p class="sell-sub">Join to start buying and selling signatures.</p>
+
+    <form id="register-form">
+      <div class="field">
+        <label for="r-email">Email</label>
+        <input id="r-email" type="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label for="r-password">Password</label>
+        <input id="r-password" type="password" placeholder="At least 6 characters" required minlength="6">
+      </div>
+      <button type="submit" class="publish-btn">Sign up</button>
+      <p class="sell-sub" style="text-align:center;margin-top:16px;">
+        Already have an account? <a href="#" id="go-to-login" style="color:var(--bronze);font-weight:500;">Log in</a>
+      </p>
+    </form>
+  </div>
+</div>
+
+<div id="login-view" class="hidden">
+  <div class="sell-wrap">
+    <a href="#" class="sell-back" id="login-back-link">← Back to browsing</a>
+    <h1 class="sell-title">Log in</h1>
+    <p class="sell-sub">Welcome back.</p>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="l-email">Email</label>
+        <input id="l-email" type="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label for="l-password">Password</label>
+        <input id="l-password" type="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="publish-btn">Log in</button>
+      <p class="sell-sub" style="text-align:center;margin-top:16px;">
+        Don't have an account? <a href="#" id="go-to-register" style="color:var(--bronze);font-weight:500;">Sign up</a>
+      </p>
     </form>
   </div>
 </div>

@@ -46,7 +46,7 @@ header{
 }
 .sell-btn{
   background:var(--bronze);color:#fff;padding:9px 18px;border-radius:999px;
-  font-size:14px;font-weight:500;margin-left:auto;
+  font-size:14px;font-weight:500;
 }
 .sell-btn:hover{background:var(--bronze-deep);}
 
@@ -57,7 +57,7 @@ header{
 }
 .chip{
   flex-shrink:0;font-size:13px;padding:7px 14px;border-radius:999px;
-  border:1px solid var(--line);color:var(--stone);background:#fff;
+  border:1px solid var(--line);color:#888888;background:#fff;
 }
 .chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
@@ -118,10 +118,7 @@ footer{
 /* sell page */
 .hidden{display:none !important;}
 .sell-wrap{max-width:640px;margin:0 auto;padding:36px 32px 60px;}
-.sell-back{
-  display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--stone);
-  margin-bottom:18px;
-}
+
 .sell-back:hover{color:var(--ink);}
 .sell-title{
   font-family:'Fraunces',serif;font-weight:600;font-size:28px;margin:0 0 6px;
@@ -190,3 +187,50 @@ footer{
 }
 
 :focus-visible{outline:2px solid var(--bronze);outline-offset:2px;}
+#auth-status{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+}
+
+.user-email{
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:13px;
+  color:var(--stone);
+  display:flex;
+  align-items:center;
+}
+.user-email::before{
+  content:'';
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--gold);
+  margin-right:6px;
+}
+
+#login-link,
+#logout-link{
+  color:var(--stone);
+  font-size:14px;
+  padding:9px 18px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  transition:color .15s ease, border-color .15s ease;
+}
+#login-link:hover,
+#logout-link:hover{
+  color:var(--gold);
+  border-color:var(--gold);
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus{
+  -webkit-box-shadow:0 0 0 1000px var(--gold) inset;
+  -webkit-text-fill-color:var(--paper);
+  transition:background-color 5000s ease-in-out 0s;
+}
