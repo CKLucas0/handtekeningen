@@ -198,10 +198,11 @@ document.getElementById('go-to-register').addEventListener('click', showRegister
 // sign up
 document.getElementById('register-form').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const username = document.getElementById('r-username').value;
   const email = document.getElementById('r-email').value;
   const password = document.getElementById('r-password').value;
 
-  const { data, error } = await supabaseClient.auth.signUp({ email, password });
+  const { data, error } = await supabaseClient.auth.signUp({email, password ,options: {data: { display_name: username }}});
 
   if (error) {
     alert(error.message);
@@ -292,10 +293,11 @@ async function updateAuthStatus(){
   const authStatus = document.getElementById('auth-status');
 
   if (session) {
-    authStatus.innerHTML = `
-      <span style="color:var(--stone); font-size:13px; margin-right:10px;">${session.user.email}</span>
-      <a href="#" class="sell-back" id="logout-link">Log out</a>
-    `;
+    const DisplayName = session.user.user_metadata.display_name || session.user.email;
+
+    `<span style="color:var(--stone); font-size:13px; margin-right:10px;">${DisplayName}</span>
+    <a href="#" class="sell-back" id="logout-link">Log out</a>`;
+
     document.getElementById('logout-link').addEventListener('click', async (e) => {
       e.preventDefault();
       await supabaseClient.auth.signOut();

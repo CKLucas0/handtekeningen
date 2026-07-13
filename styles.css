@@ -215,7 +215,7 @@ footer{
   border:1px solid var(--line);
   padding:6px 14px;
   border-radius:999px;
-  font-size:13px;
+  font-size:13px; 
   color:var(--stone);
   display:flex;
   align-items:center;
