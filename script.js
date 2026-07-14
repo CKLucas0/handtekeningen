@@ -54,9 +54,9 @@ function renderGrid(category,search){
   if (PriceRangeMax != 0) {
     filtereditems = filtereditems.filter(item => item.price <= PriceRangeMax);
   }
-  
-  grid.innerHTML = filtereditems.map(it => `
-    <div class="card">
+  currentItems = filtereditems;
+  grid.innerHTML = filtereditems.map((it, index) => `
+    <div class="card" data-index="${index}">
     <div class="thumb">
     ${it.tag ? `<div class="tag">${it.tag}</div>` : ''}
     <div class="heart">
@@ -78,10 +78,10 @@ function renderGrid(category,search){
         
         async function loadListings(){
           const { data, error } = await supabaseClient
-          .from('listings')
-          .select()
-          .order('created_at', { ascending: false });
-          
+            .from('listings')
+            .select('*, profiles(display_name)')
+            .order('created_at', { ascending: false });
+
           if (error){
             console.error(error);
             return;
@@ -89,8 +89,39 @@ function renderGrid(category,search){
           items = data;
           renderGrid("All", document.getElementById("search-input").value);
         }
-        loadListings()
-        
+        loadListings();
+
+let currentItems = [];
+
+const modal = document.getElementById('item-modal');
+
+document.getElementById('grid').addEventListener('click', (e) => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+
+  const index = Number(card.dataset.index);
+  const it = currentItems[index];
+  if (!it) return;
+
+  document.getElementById('modal-photo').src = it.photo || 'logo black.png';
+  document.getElementById('modal-price').innerHTML = `€${it.price}` + (it.was ? ` <span class="was">was €${it.was}</span>` : '');
+  document.getElementById('modal-sign').textContent = it.sign;
+  document.getElementById('modal-meta').textContent = `${it.product} · ${it.size ? it.size + ' · ' : ''}${it.cond}`;
+  document.getElementById('modal-desc').textContent = it.desc || 'No description provided.';
+  document.getElementById('modal-publisher-name').textContent = it.profiles?.display_name || 'Unknown seller';
+
+  modal.classList.remove('hidden');
+});
+
+
+document.getElementById('modal-close').addEventListener('click', () => {
+  modal.classList.add('hidden');
+});
+
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) modal.classList.add('hidden');
+});
+
 let chipText = "All"
 
 document.querySelectorAll('.chip').forEach(chip => {
@@ -202,16 +233,24 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
   const email = document.getElementById('r-email').value;
   const password = document.getElementById('r-password').value;
 
-  const { data, error } = await supabaseClient.auth.signUp({email, password ,options: {data: { display_name: username }}});
+  const { data, error } = await supabaseClient.auth.signUp({
+    email, password,
+    options: { data: { display_name: username } }
+  });
 
   if (error) {
     alert(error.message);
-  } else {
-    alert('Account created! Check your email to confirm before logging in.');
-    showLogin();
+    return;
   }
-});
 
+  await supabaseClient.from('profiles').insert({
+    id: data.user.id,
+    display_name: username
+  });
+
+  alert('Account created! Check your email to confirm before logging in.');
+  showLogin();
+});
 // publishing a new listing
 document.getElementById('sell-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -240,6 +279,7 @@ document.getElementById('sell-form').addEventListener('submit', async (e) => {
     category: document.getElementById("f-category").value,
     photo: photoData,
     user_id: session.user.id,
+    desc: document.getElementById('f-desc').value,  
   };
 
   const { error } = await supabaseClient.from('listings').insert(newItem);
@@ -293,20 +333,19 @@ async function updateAuthStatus(){
   const authStatus = document.getElementById('auth-status');
 
   if (session) {
-    const DisplayName = session.user.user_metadata.display_name || session.user.email;
+  const DisplayName = session.user.user_metadata.display_name || session.user.email;
 
-    `<span style="color:var(--stone); font-size:13px; margin-right:10px;">${DisplayName}</span>
-    <a href="#" class="sell-back" id="logout-link">Log out</a>`;
+  authStatus.innerHTML = `
+    <span style="color:var(--stone); font-size:13px; margin-right:10px;">${DisplayName}</span>
+    <a href="#" class="sell-back" id="logout-link">Log out</a>
+  `;
 
-    document.getElementById('logout-link').addEventListener('click', async (e) => {
-      e.preventDefault();
-      await supabaseClient.auth.signOut();
-      updateAuthStatus();
-      showBrowse();
-    });
-  } else {
-    authStatus.innerHTML = `<a href="#" class="sell-back" id="login-link">Log in</a>`;
-    document.getElementById('login-link').addEventListener('click', showLogin);
+  document.getElementById('logout-link').addEventListener('click', async (e) => {
+    e.preventDefault();
+    await supabaseClient.auth.signOut();
+    updateAuthStatus();
+    showBrowse();
+  });
   }
 }
 
