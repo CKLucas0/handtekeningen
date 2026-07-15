@@ -228,25 +228,34 @@ document.getElementById('go-to-register').addEventListener('click', showRegister
 
 // sign up
 document.getElementById('register-form').addEventListener('submit', async (e) => {
+  
   e.preventDefault();
+  
   const username = document.getElementById('r-username').value;
   const email = document.getElementById('r-email').value;
   const password = document.getElementById('r-password').value;
+
+  const { data: existing } = await supabaseClient
+    .from('profiles')
+    .select('id')
+    .eq('display_name', username)
+    .maybeSingle();
+
+  if (existing) {
+    alert('That display name is already taken. Please choose another.');
+    return;
+  }
 
   const { data, error } = await supabaseClient.auth.signUp({
     email, password,
     options: { data: { display_name: username } }
   });
+  
 
   if (error) {
     alert(error.message);
     return;
   }
-
-  await supabaseClient.from('profiles').insert({
-    id: data.user.id,
-    display_name: username
-  });
 
   alert('Account created! Check your email to confirm before logging in.');
   showLogin();
@@ -346,6 +355,10 @@ async function updateAuthStatus(){
     updateAuthStatus();
     showBrowse();
   });
+  }
+  else {
+    authStatus.innerHTML = `<a href="#" class="sell-back" id="login-link">Log in</a>`;
+    document.getElementById('login-link').addEventListener('click', showLogin);
   }
 }
 
